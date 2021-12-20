@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Android_Mini_Project_Final_01</string>
+    <string name="SignIn_Text_01">[ Google Account Sign In ]</string>
+    <string name="SignIn_Text_02">Sign In</string>
+    <string-array name="person_list">
+        <string>"[ First User Account ]"</string>
+        <string>"John"</string>
+        <string>"Martha"</string>
+        <string>"Dio"</string>
+        <string>"Simon"</string>
+        <string>"Tommy"</string>
+        <string>"Devon"</string>
+    </string-array>
+</resources>
