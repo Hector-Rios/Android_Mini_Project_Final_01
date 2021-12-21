@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.sign_in_button_1).setOnClickListener(this);
-
+        System.out.println("OnCreate. Before SetUpGoogleSignIn ...");
         setUpGoogleSignIn(); // Sets up Google Sign in stuff.
     }
 
@@ -104,13 +104,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Update certain UI aspects.
     private void updateUI(GoogleSignInAccount account)
     {
-        //System.out.println("* * * updateUI.");
+        // System.out.println("* * * updateUI.");
         if (account != null) {
             String name = account.getDisplayName();
             String ID = account.getId();
             String email = account.getEmail();
             // Prob launch new activity. * * *
-            displayAccountRecyclerView();
+            // Intent creation
+            Intent intent = new Intent(this, DisplayListActivity.class);
+            // Update Information values
+            // Do this in the activivty and not here. displayAccountRecyclerView(name, ID, email);
+            // Launch new Activity.
+            intent.putExtra("SignInName", name);
+            intent.putExtra("SignInAccountID", ID);
+            intent.putExtra("SignInAccountEmail", email);
+
+            startActivity(intent);
 
             // Here
             // mStatusTextView.setText(getString(R.string.acct_info_fmt, name, ID, email));
@@ -125,15 +134,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void displayAccountRecyclerView() {
-
+    /*private void displayAccountRecyclerView(String name, String ID, String email)
+    {
         // Get Information in the form of an array.
         ArrayList<String> givenNames = new ArrayList<>();
-        givenNames.add("CustomName");
+        givenNames.add("name");
 
         String[] ppl_names = this.getResources().getStringArray(R.array.person_list);
         givenNames.addAll(Arrays.asList(ppl_names));
-        ppl_names[0] = "Custom_Name";
+        ppl_names[0] = name;
 
         // ID generated array list.
         Integer [] givenID = new Integer[givenNames.size()]; // { Random.nextInt(100) };
@@ -146,16 +155,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         RecyclerView myRecycleView = findViewById(R.id.recycler_view);
         PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(ppl_names, givenID);
         myRecycleView.setAdapter(myAdaptation);
-
-    }
+    }*/
 
 
     @Override
     public void onClick(View v) {   // Handles click events for this activity.
-        switch (v.getId()) {
-            case R.id.sign_in_button_1:
-                SignIn_By_Click(v);
-                break;
+        if (v.getId() == R.id.sign_in_button_1) {
+            System.out.println("Sign In Button Pressed ... ");
+            SignIn_By_Click(v);
         }
     }
 
