@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PersonAccountAdaptor extends RecyclerView.Adapter{
 
     protected String[] account_name;
-    protected Integer[] account_num;
+    protected String[] account_num;
 
-    public PersonAccountAdaptor(String[] givenAccounts, Integer[] givenIDs)
+    public PersonAccountAdaptor(String[] givenAccounts, String[] givenIDs)
     {    account_name = givenAccounts;   account_num = givenIDs;    }
 
     class AccountViewHolder extends RecyclerView.ViewHolder
@@ -28,13 +28,12 @@ public class PersonAccountAdaptor extends RecyclerView.Adapter{
             AccountIDTextView = itemView.findViewById(R.id.account_ID_text_view);
         }
 
-        public void bind(String AccountName, Integer AccountID)
+        public void bind(String AccountName, String AccountID)
         {
             AccountNameTextView.setText(AccountName);
-            AccountIDTextView.setText(String.valueOf(AccountID));
+            AccountIDTextView.setText(AccountID);
         }
     }
-
 
     @NonNull
     @Override
