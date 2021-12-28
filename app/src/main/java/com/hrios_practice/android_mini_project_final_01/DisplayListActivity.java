@@ -1,6 +1,5 @@
 package com.hrios_practice.android_mini_project_final_01;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,22 +7,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -34,11 +26,11 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     protected String user_name;
     protected String user_ID;
     protected String user_email;
-    protected User[] user_accounts;
+    protected String source;
+    private   User[] user_accounts;
 
     protected final String URL = "http://jsonplaceholder.typicode.com/users";
-    protected Integer userCount = 0;
-    private OkHttpClient client;
+    protected OkHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,107 +40,114 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         findViewById(R.id.sign_out_button_1).setOnClickListener(this);
 
         Intent intent = this.getIntent();
+        String[] emptySlot1 = new String[11];
 
-        user_name = intent.getStringExtra("SignInName");
-        user_ID = intent.getStringExtra("SignInAccountID");
+        user_name  = intent.getStringExtra("SignInName");
+        user_ID    = intent.getStringExtra("SignInAccountID");
         user_email = intent.getStringExtra("SignInAccountEmail");
 
         requestUsers();  // Creates a request to obtain an array of users.
 
-        displayAccountRecyclerView(); // Begins the display of information for this activity.
-    }
-
-    private void displayAccountRecyclerView()
-    {
-        // Get Information in the form of an array.
-        ArrayList<String> givenNames = new ArrayList<>();
-        ArrayList<String> givenIDs = new ArrayList<>();
-
-        String[] resultNames;
-        String[] resultIDs;
-        givenNames.add(user_name);
-
         if (user_accounts == null)
-        {   System.out.println("user_accounts is NULL");   }
-
-        for (User u : user_accounts)
         {
-            givenNames.add(u.getName());
-            givenIDs.add(u.getId());
+            System.out.println("* * * User Account IS NULL ...");
+        }
+        else
+        {
+            System.out.println("* * * User Account IS * NOT * NULL ...");
         }
 
-        resultNames = (String[]) givenNames.toArray(); // Convert Arraylist to an Array.
-        resultIDs = (String[]) givenIDs.toArray(); // Convert Arraylist to an Array.
+        RecyclerView myRecycleView = findViewById(R.id.recycler_view);
+        PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(emptySlot1, emptySlot1);
+        myRecycleView.setAdapter(myAdaptation);
+    }
 
-        //String[] ppl_names = this.getResources().getStringArray(R.array.person_list);
-        //givenNames.addAll(Arrays.asList(ppl_names));
-        //ppl_names[0] = user_name;
+    private void displayAccountRecyclerView(User[] given_accts)
+    {
+        String image_url = "https://robohash.org/";
 
-        // ID generated array list.
-        //Integer [] givenID = new Integer[givenNames.size()]; // { Random.nextInt(100) };
-        //Random myGuess = new Random();
+        // Get Information in the form of an array.
+        String[] resultNames = new String[given_accts.length + 1];
+        String[] resultImageLink = new String[given_accts.length + 1];
+        int indexHol = 1;
 
-        //for ( int i = 0; i < givenID.length; i++)
-        //{    givenID[i] = myGuess.nextInt(100);    }
+        resultNames[0] = user_name; // givenNames.add(user_name);
+        resultImageLink[0] = image_url + user_name;
+
+        // Obtain needed information to display to screen in certain views.
+        for (User u : given_accts)
+        {
+            resultNames[indexHol] = u.getName();//givenNames.add(u.getName());
+            resultImageLink[indexHol] = image_url + u.getName();
+
+            indexHol += 1;                      // increment value index for result values array.
+        }
 
         // Create RecyclerView and pass information to it.
         RecyclerView myRecycleView = findViewById(R.id.recycler_view);
-        //PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(ppl_names, givenID);
-        PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(resultNames, resultIDs);
+        PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(resultNames, resultImageLink);
         myRecycleView.setAdapter(myAdaptation);
     }
 
     // Follow 4A Directions and obtain an array of USERS.
     private void requestUsers()
     {
+        //System.out.println("* * * REQUEST USERS ...");
         try
         {   run();   }
         catch (Exception e)
         {   System.out.println("* * * Exception Raised: " + e);   }
+
     }
 
     // Creates a connection request to receive Json for processing to user accounts
-    private void run() {
+    public void run()
+    {
+        //System.out.println("* * Begin Run()");
         client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(URL)
                 .build();
 
-        client.newCall(request).enqueue(new Callback()
-        {
-            @Override public void onFailure(Call call, IOException e) {
+        Callback msgCall = new Callback() {
+            private User[] tempUsers;
+
+            @Override
+            public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
-            @Override public void onResponse(Call call, Response response) throws IOException {
-                try (ResponseBody responseBody = response.body())
-                {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
-                    //Headers responseHeaders = response.headers();
-                    //for (int i = 0, size = responseHeaders.size(); i < size; i++)
-                    //{ //System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                        //System.out.println("*** " + responseHeaders.get("id"));
-                        //System.out.println("test-print-ID: " + responseHeaders.name(i)); }
-                    // System.out.println("============ 1 ==================");
+                    source = responseBody.string();
 
-                    String source = responseBody.string();
-                    System.out.println("[ START ] " + source + " [ END ] ");
+                    // System.out.println("[ START ] " + source + " [ END ] ");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Gson gson = new Gson();
+                            user_accounts = gson.fromJson(source, User[].class);
+                            System.out.println("* * * runOnUiThread - Finsihed. ???");
 
-                    // Try and loop to find correct values to create a user. and record it.
-                    Gson gson = new Gson();
-                    try {
-                        user_accounts = gson.fromJson(source, User[].class);
-                        System.out.println("Work??? ");
-                        //for (User u : myUsers)
-                        //{   System.out.println("User: ID: " + u.id + ", name: " + u.name);   }
-                    }
-                    catch(Exception exception)
-                    {   System.out.println("EXCEPTION: " + exception);   }
-                }
-            }
-        });
+                            if (user_accounts == null)
+                            { System.out.println("* * * runOnUiThread - user_accounts is NULL. ???"); }
+                            else
+                            {
+                                System.out.println("* * * runOnUiThread - user_accounts is NOT NULL. ???");
+                                displayAccountRecyclerView(user_accounts);
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println("* * * GSON Exception Raised: " + e.getMessage());
+                }}};
+
+        client.newCall(request).enqueue(msgCall);
     }
+
 
     @Override
     public void onClick(View v)
@@ -175,7 +174,6 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     {
         Intent intent = new Intent(this, MainActivity.class);
         // intent.putExtra("SignInAccountEmail", email);
-
         startActivity(intent);
     }
 }

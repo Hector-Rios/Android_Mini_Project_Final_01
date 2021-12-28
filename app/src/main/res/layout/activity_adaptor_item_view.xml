@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/Frame_Layout01"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -26,12 +28,13 @@
                 android:text=""
                 android:textSize="25sp" />
 
-            <TextView
-                android:id="@+id/account_ID_text_view"
-                android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/account_img_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="20sp" />
+                tools:srcCompat="@tools:sample/avatars"
+                android:contentDescription="TODO" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </FrameLayout>
