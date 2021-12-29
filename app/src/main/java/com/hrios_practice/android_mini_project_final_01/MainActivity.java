@@ -29,7 +29,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected GoogleSignInClient mGoogleSignInClient;
     // protected TextView mStatusTextView;
 
-
+/*
+* Note: Put a flag that deletes the history of the previous activity.
+* */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // System.out.println("* * * updateUI.");
         if (account != null) {
             String name = account.getDisplayName();
+            String user_name = account.getGivenName();
             String ID = account.getId();
             String email = account.getEmail();
             // Prob launch new activity. * * *
@@ -116,16 +119,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Do this in the activivty and not here. displayAccountRecyclerView(name, ID, email);
             // Launch new Activity.
             intent.putExtra("SignInName", name);
+            intent.putExtra("SignInName2", user_name);
             intent.putExtra("SignInAccountID", ID);
             intent.putExtra("SignInAccountEmail", email);
 
             startActivity(intent);
 
-            // Here
-            // mStatusTextView.setText(getString(R.string.acct_info_fmt, name, ID, email));
-            // Signed in as: \nName: %s. \nAccount ID: %s. \nAccount Email: %s.
-            // findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            // findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
             //mStatusTextView.setText(R.string.signed_out);
             System.out.println("* * * Account returned as NULL.");

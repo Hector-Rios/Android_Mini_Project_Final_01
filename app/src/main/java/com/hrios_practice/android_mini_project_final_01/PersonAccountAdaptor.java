@@ -17,6 +17,7 @@ public class PersonAccountAdaptor extends RecyclerView.Adapter{
 
     protected String[] account_name;
     protected String[] account_img_links;
+    protected User[] account_users;
 
     public PersonAccountAdaptor(String[] givenAccounts, String[] givenImgLinks)
     {    account_name = givenAccounts;   account_img_links = givenImgLinks; }

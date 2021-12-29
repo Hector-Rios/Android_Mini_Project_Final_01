@@ -13,4 +13,8 @@
     </string-array>
     <string name="server_client_id" tools:ignore="TypographyDashes">"885224961259-1fng7oc3fglddkp0ukqle7uvs6l6mh3f.apps.googleusercontent.com"</string>
     <string name="SignOut_Text_01">[ Sign Out ]</string>
+    <string name="acct_profile_01">Account Profile</string>
+    <string name="profile_account_address">[ Profile Account Address ]</string>
+    <string name="street">Street</string>
+    <string name="enter_street_value">[ Enter Street Value ]</string>
 </resources>

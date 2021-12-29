@@ -22,6 +22,17 @@ public class User {
         return email;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", address=" + address +
+                '}';
+    }
+
     public Address getAddress()
     { return address; }
 
@@ -30,6 +41,9 @@ public class User {
     {
         String street;
         String suite;
+        String city;
+        String zipcode;
+        String phone;
 
         public String getCity() {
             return city;
@@ -55,10 +69,6 @@ public class User {
             this.phone = phone;
         }
 
-        String city;
-        String zipcode;
-        String phone;
-
         // Setters - Getters.
         public String getStreet()
         {   return street;   }
@@ -72,6 +82,17 @@ public class User {
 
         public void setSuite(String suite) {
             this.suite = suite;
+        }
+
+        @Override
+        public String toString() {
+            return "Address{" +
+                    "street='" + street + '\'' +
+                    ", suite='" + suite + '\'' +
+                    ", city='" + city + '\'' +
+                    ", zipcode='" + zipcode + '\'' +
+                    ", phone='" + phone + '\'' +
+                    '}';
         }
     }
 }

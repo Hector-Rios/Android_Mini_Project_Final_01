@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -24,6 +25,7 @@ import okhttp3.ResponseBody;
 public class DisplayListActivity extends AppCompatActivity implements View.OnClickListener{
 
     protected String user_name;
+    protected String user_name2;
     protected String user_ID;
     protected String user_email;
     protected String source;
@@ -43,19 +45,16 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         String[] emptySlot1 = new String[11];
 
         user_name  = intent.getStringExtra("SignInName");
+        user_name2  = intent.getStringExtra("SignInName2");
         user_ID    = intent.getStringExtra("SignInAccountID");
         user_email = intent.getStringExtra("SignInAccountEmail");
 
         requestUsers();  // Creates a request to obtain an array of users.
 
         if (user_accounts == null)
-        {
-            System.out.println("* * * User Account IS NULL ...");
-        }
+        {   System.out.println("* * * User Account IS NULL ...");  }
         else
-        {
-            System.out.println("* * * User Account IS * NOT * NULL ...");
-        }
+        {   System.out.println("* * * User Account IS * NOT * NULL ...");   }
 
         RecyclerView myRecycleView = findViewById(R.id.recycler_view);
         PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(emptySlot1, emptySlot1);
@@ -77,6 +76,8 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         // Obtain needed information to display to screen in certain views.
         for (User u : given_accts)
         {
+            System.out.println("User: " + u);
+            System.out.println("\tAddress: " + u.address);
             resultNames[indexHol] = u.getName();//givenNames.add(u.getName());
             resultImageLink[indexHol] = image_url + u.getName();
 
@@ -130,7 +131,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
                         public void run() {
                             Gson gson = new Gson();
                             user_accounts = gson.fromJson(source, User[].class);
-                            System.out.println("* * * runOnUiThread - Finsihed. ???");
+                            System.out.println("* * * runOnUiThread - Finished. ???");
 
                             if (user_accounts == null)
                             { System.out.println("* * * runOnUiThread - user_accounts is NULL. ???"); }
@@ -148,6 +149,51 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         client.newCall(request).enqueue(msgCall);
     }
 
+    public void onClickProfile(View v)
+    {
+        System.out.println("* * * DisplayListActivity - OnClickProfile...");
+        boolean signedInUser = false;
+        User picked_user = new User();
+        Intent profileIntent = new Intent(this, AccountProfileActivity.class);
+
+        TextView profileView = (TextView) v;
+        String cur_name = (String) profileView.getText();
+
+        if (cur_name.compareTo(user_name) == 0)
+        {   signedInUser = true;  }
+        else  // Obtain the chosen user thats not signed in.
+        {
+            for (User u : user_accounts)
+            {
+                if (u.getName().compareTo(cur_name) == 0) // match found.
+                {   picked_user = u;   break;   }
+            }
+        }
+
+        profileIntent.putExtra("LoggedInUser", signedInUser);
+
+        //If click was on user.
+        if (signedInUser) // Input info on signed in user.
+        {
+            profileIntent.putExtra("user_name",  user_name);
+            profileIntent.putExtra("user_name2", user_name2);
+            profileIntent.putExtra("user_ID",    user_ID);
+            profileIntent.putExtra("user_email", user_email);
+        }
+        else  // If other user then input all the information.
+        {
+            profileIntent.putExtra("user_name",  picked_user.getName());
+            profileIntent.putExtra("user_name2", picked_user.getUsername());
+            profileIntent.putExtra("user_ID",    picked_user.getId());
+            profileIntent.putExtra("user_email", picked_user.getEmail());
+            profileIntent.putExtra("user_street",  picked_user.getAddress().getStreet());
+            profileIntent.putExtra("user_suite", picked_user.getAddress().getSuite());
+            profileIntent.putExtra("user_city",    picked_user.getAddress().getCity());
+            profileIntent.putExtra("user_zipcode", picked_user.getAddress().getZipcode());
+        }
+
+        startActivity(profileIntent);  // Start Activity with certain data/info.
+    }
 
     @Override
     public void onClick(View v)
@@ -166,7 +212,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
                     System.out.println("Sign Out Process complete?? ");
                 });
 
-        // Launch main activiy.
+        // Launch main activity.
         launchSignInActivity();
     }
 
