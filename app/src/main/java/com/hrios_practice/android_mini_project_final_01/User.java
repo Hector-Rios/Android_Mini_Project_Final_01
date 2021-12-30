@@ -1,11 +1,19 @@
 package com.hrios_practice.android_mini_project_final_01;
 
 public class User {
-    public String id;
-    public String name;
-    public String username;
-    public String email;
+    public String id = "";
+    public String name = "";
+    public String username = "";
+    public String email = "";
     public Address address;
+
+    public User(String gName, String gName2, String gID, String gEmail)
+    {
+        name = gName; username = gName2; id = gID; email = gEmail;
+        address = new Address();
+    }
+
+    public User() { }
 
     public String getName() {
         return name;
@@ -39,11 +47,11 @@ public class User {
     // Class Creation Address Here.
     public class Address
     {
-        String street;
-        String suite;
-        String city;
-        String zipcode;
-        String phone;
+        String street = "";
+        String suite  = "";
+        String city   = "";
+        String zipcode= "";
+        String phone  = "";
 
         public String getCity() {
             return city;

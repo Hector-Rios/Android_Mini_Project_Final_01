@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -29,6 +30,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     protected String user_ID;
     protected String user_email;
     protected String source;
+    protected User   curGoogleUser;
     private   User[] user_accounts;
 
     protected final String URL = "http://jsonplaceholder.typicode.com/users";
@@ -49,6 +51,12 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         user_ID    = intent.getStringExtra("SignInAccountID");
         user_email = intent.getStringExtra("SignInAccountEmail");
 
+        curGoogleUser = new User(user_name, user_name2, user_ID, user_email);
+
+        // If the intent has more information to hold onto for the current user.
+        if (intent.getBooleanExtra("isSignedInUser", false))
+        {   updateCurrentGoogleUser(intent);   }
+
         requestUsers();  // Creates a request to obtain an array of users.
 
         if (user_accounts == null)
@@ -59,6 +67,12 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         RecyclerView myRecycleView = findViewById(R.id.recycler_view);
         PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(emptySlot1, emptySlot1);
         myRecycleView.setAdapter(myAdaptation);
+    }
+
+    private void updateCurrentGoogleUser(Intent intent)
+    {
+        curGoogleUser.updateAddress();
+
     }
 
     private void displayAccountRecyclerView(User[] given_accts)
@@ -76,8 +90,8 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         // Obtain needed information to display to screen in certain views.
         for (User u : given_accts)
         {
-            System.out.println("User: " + u);
-            System.out.println("\tAddress: " + u.address);
+            //System.out.println("User: " + u);
+            //System.out.println("\tAddress: " + u.address);
             resultNames[indexHol] = u.getName();//givenNames.add(u.getName());
             resultImageLink[indexHol] = image_url + u.getName();
 
@@ -153,14 +167,17 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     {
         System.out.println("* * * DisplayListActivity - OnClickProfile...");
         boolean signedInUser = false;
-        User picked_user = new User();
+        User picked_user     = null;
         Intent profileIntent = new Intent(this, AccountProfileActivity.class);
 
-        TextView profileView = (TextView) v;
-        String cur_name = (String) profileView.getText();
+        TextView profileView = v.findViewById(R.id.account_name_text_view);
+        String cur_name      = (String) profileView.getText();
 
         if (cur_name.compareTo(user_name) == 0)
-        {   signedInUser = true;  }
+        {
+            signedInUser = true;
+            picked_user = curGoogleUser;
+        }
         else  // Obtain the chosen user thats not signed in.
         {
             for (User u : user_accounts)
@@ -172,25 +189,14 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
 
         profileIntent.putExtra("LoggedInUser", signedInUser);
 
-        //If click was on user.
-        if (signedInUser) // Input info on signed in user.
-        {
-            profileIntent.putExtra("user_name",  user_name);
-            profileIntent.putExtra("user_name2", user_name2);
-            profileIntent.putExtra("user_ID",    user_ID);
-            profileIntent.putExtra("user_email", user_email);
-        }
-        else  // If other user then input all the information.
-        {
-            profileIntent.putExtra("user_name",  picked_user.getName());
-            profileIntent.putExtra("user_name2", picked_user.getUsername());
-            profileIntent.putExtra("user_ID",    picked_user.getId());
-            profileIntent.putExtra("user_email", picked_user.getEmail());
-            profileIntent.putExtra("user_street",  picked_user.getAddress().getStreet());
-            profileIntent.putExtra("user_suite", picked_user.getAddress().getSuite());
-            profileIntent.putExtra("user_city",    picked_user.getAddress().getCity());
-            profileIntent.putExtra("user_zipcode", picked_user.getAddress().getZipcode());
-        }
+        profileIntent.putExtra("user_name",    picked_user.getName());
+        profileIntent.putExtra("user_name2",   picked_user.getUsername());
+        profileIntent.putExtra("user_ID",      picked_user.getId());
+        profileIntent.putExtra("user_email",   picked_user.getEmail());
+        profileIntent.putExtra("user_street",  picked_user.getAddress().getStreet());
+        profileIntent.putExtra("user_suite",   picked_user.getAddress().getSuite());
+        profileIntent.putExtra("user_city",    picked_user.getAddress().getCity());
+        profileIntent.putExtra("user_zipcode", picked_user.getAddress().getZipcode());
 
         startActivity(profileIntent);  // Start Activity with certain data/info.
     }

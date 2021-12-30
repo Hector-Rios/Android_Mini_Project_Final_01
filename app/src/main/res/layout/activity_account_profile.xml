@@ -6,199 +6,198 @@
     android:layout_height="match_parent"
     tools:context=".AccountProfileActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/acct_profile_title_01"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-black"
-            android:text="@string/acct_profile_01"
-            android:textAlignment="center"
-            android:textSize="34sp" />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="[ Sign Out ]" />
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="[ Return to Accounts ]" />
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/profile_name_layout01"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:background="#F9FAFF"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/acct_profile_title_01"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:text="@string/acct_profile_01"
+                android:textAlignment="center"
+                android:textSize="34sp" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClickSignOut"
+                android:text="[ Sign Out ]" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClickReturnToAccountList"
+                android:text="[ Return to Accounts ]" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#658EA3"
+                android:padding="8dp"
+                android:text="Account Profile Information"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/profile_name_display01"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="[ Profile Name ]"
+                android:padding="4dp"
+                android:text="Profile Name"
+                android:textAlignment="center"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/profile_value_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="TextView"
+                android:textAlignment="textStart"
                 android:textSize="20sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/profile_username_layout01"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/profile_username_layout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="[ Profile Username ]"
+                android:padding="4dp"
+                android:text="Profile Username"
+                android:textAlignment="center"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/profile_username_value01"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="[ Username ]"
+                android:textAlignment="textStart"
                 android:textSize="20sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/profile_email_layout01"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/profile_email_layout02"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="[ Profile Email ]"
+                android:padding="4dp"
+                android:text="Profile Email "
+                android:textAlignment="center"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/profile_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="[ Email Value ]"
+                android:textAlignment="textStart"
                 android:textSize="20sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/profile_id_layout01"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/profile_id_layout"
-                android:layout_width="wrap_content"
+                android:id="@+id/profile_id_layout01"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="[ Profile ID ]"
+                android:padding="4dp"
+                android:text="Account ID"
+                android:textAlignment="center"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/profile_id_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="[ ID Value ]"
+                android:text="[ Profile ID ]"
                 android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/account_address_info_border_01"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#5D8FA5"
+                android:padding="8dp"
+                android:text="@string/profile_account_address"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/inputAddress01"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/street"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/editText_street_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:importantForAutofill="no"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:text="@string/enter_street_value" />
+
+            <TextView
+                android:id="@+id/inputAddress02"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Suite"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/EditText_suite_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:text="[ Enter Suite Value ]" />
+
+            <TextView
+                android:id="@+id/inputAddress03"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="City"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/editText_city_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:text="[ Enter City Location ]" />
+
+            <TextView
+                android:id="@+id/inputAddress04"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Zipcode"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/editText_zipcode_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:text="[ Enter Zipcode Value ]" />
+
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/account_address_info_border_01"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#4F47EB"
-            android:padding="8dp"
-            android:text="@string/profile_account_address"
-            android:textAlignment="center"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/inputAddress01"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/street"
-            android:textAlignment="center"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/editText_street_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            android:text="@string/enter_street_value"
-            android:importantForAutofill="no" />
-
-        <TextView
-            android:id="@+id/inputAddress02"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Suite"
-            android:textAlignment="center"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/EditText_suite_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            android:text="[ Enter Suite Value ]" />
-
-        <TextView
-            android:id="@+id/inputAddress03"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="City"
-            android:textAlignment="center"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/editTextTextPersonName6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            android:text="[ Enter City Location ]" />
-
-        <TextView
-            android:id="@+id/inputAddress04"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Zipcode"
-            android:textAlignment="center"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/editTextTextPersonName7"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            android:text="[ Enter Zipcode Value ]" />
-
-    </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
