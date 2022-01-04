@@ -1,5 +1,7 @@
 package com.hrios_practice.android_mini_project_final_01;
 
+import android.content.Intent;
+
 public class User {
     public String id = "";
     public String name = "";
@@ -13,7 +15,9 @@ public class User {
         address = new Address();
     }
 
-    public User() { }
+    public User() {
+        address = new Address();
+    }
 
     public String getName() {
         return name;
@@ -43,6 +47,18 @@ public class User {
 
     public Address getAddress()
     { return address; }
+
+    public void updateAddress(String street, String suite, String city, String zipcode)
+    {
+        address.setStreet(street); address.setSuite(suite);
+        address.setCity(city);     address.setZipcode(zipcode);
+    }
+
+    public void updatePersonal(String iName, String iUserName, String iEmail, String i_id)
+    {
+        name = iName;   username = iUserName;
+        email = iEmail; id = i_id;
+    }
 
     // Class Creation Address Here.
     public class Address

@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra("SignInName2", user_name);
             intent.putExtra("SignInAccountID", ID);
             intent.putExtra("SignInAccountEmail", email);
+            intent.putExtra("initialSignIn", true);
 
             startActivity(intent);
 

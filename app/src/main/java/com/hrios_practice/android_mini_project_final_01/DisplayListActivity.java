@@ -3,7 +3,9 @@ package com.hrios_practice.android_mini_project_final_01;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -32,6 +34,8 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     protected String source;
     protected User   curGoogleUser;
     private   User[] user_accounts;
+    protected Intent profileIntent;
+    protected boolean firstSignIn = false;
 
     protected final String URL = "http://jsonplaceholder.typicode.com/users";
     protected OkHttpClient client;
@@ -42,37 +46,62 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_display_list);
 
         findViewById(R.id.sign_out_button_1).setOnClickListener(this);
-
         Intent intent = this.getIntent();
+
+        boolean localStatus = intent.getBooleanExtra("isSignedInUser", false);
+        firstSignIn = intent.getBooleanExtra("initialSignIn", false);
+
         String[] emptySlot1 = new String[11];
 
-        user_name  = intent.getStringExtra("SignInName");
-        user_name2  = intent.getStringExtra("SignInName2");
-        user_ID    = intent.getStringExtra("SignInAccountID");
-        user_email = intent.getStringExtra("SignInAccountEmail");
+        if (firstSignIn)
+        {
+            user_name   = intent.getStringExtra("SignInName");
+            user_name2  = intent.getStringExtra("SignInName2");
+            user_ID     = intent.getStringExtra("SignInAccountID");
+            user_email  = intent.getStringExtra("SignInAccountEmail");
 
-        curGoogleUser = new User(user_name, user_name2, user_ID, user_email);
+            curGoogleUser = new User(user_name, user_name2, user_ID, user_email);
+        }
 
-        // If the intent has more information to hold onto for the current user.
-        if (intent.getBooleanExtra("isSignedInUser", false))
-        {   updateCurrentGoogleUser(intent);   }
+        if (!firstSignIn && localStatus)
+        {
+            //System.out.println("GoogleUser Details Updated. ");
+            updateCurrentGoogleUser();
+        }
 
         requestUsers();  // Creates a request to obtain an array of users.
 
-        if (user_accounts == null)
+        /*if (user_accounts == null)
         {   System.out.println("* * * User Account IS NULL ...");  }
         else
-        {   System.out.println("* * * User Account IS * NOT * NULL ...");   }
+        {   System.out.println("* * * User Account IS * NOT * NULL ...");   }*/
 
         RecyclerView myRecycleView = findViewById(R.id.recycler_view);
         PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(emptySlot1, emptySlot1);
         myRecycleView.setAdapter(myAdaptation);
     }
 
-    private void updateCurrentGoogleUser(Intent intent)
+    // Updates the Signed in User's Address based on given input.
+    private void updateCurrentGoogleUser()
     {
-        curGoogleUser.updateAddress();
+        if (curGoogleUser == null)
+        {   curGoogleUser = new User();   }
 
+        SharedPreferences givenPref = getSharedPreferences("sharedPref_GoogleUser", Context.MODE_PRIVATE);
+
+        String iName     = givenPref.getString("input_01", "");
+        String iUserName = givenPref.getString("input_02", "");
+        String iEmail    = givenPref.getString("input_03", "");
+        String i_ID      = givenPref.getString("input_04", "");
+
+        String iStreet  = givenPref.getString("input_05", "[ Enter Street Value ]");
+        String iSuite   = givenPref.getString("input_06", "[ Enter Suite Value ]");
+        String iCity    = givenPref.getString("input_07", "[ Enter City Value ]");
+        String iZipcode = givenPref.getString("input_08", "[ Enter ZipCode Value ]");
+
+        curGoogleUser.updatePersonal(iName, iUserName, iEmail, i_ID);
+        curGoogleUser.updateAddress(iStreet, iSuite, iCity, iZipcode);
+        user_name = iName;
     }
 
     private void displayAccountRecyclerView(User[] given_accts)
@@ -80,7 +109,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         String image_url = "https://robohash.org/";
 
         // Get Information in the form of an array.
-        String[] resultNames = new String[given_accts.length + 1];
+        String[] resultNames     = new String[given_accts.length + 1];
         String[] resultImageLink = new String[given_accts.length + 1];
         int indexHol = 1;
 
@@ -94,7 +123,6 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
             //System.out.println("\tAddress: " + u.address);
             resultNames[indexHol] = u.getName();//givenNames.add(u.getName());
             resultImageLink[indexHol] = image_url + u.getName();
-
             indexHol += 1;                      // increment value index for result values array.
         }
 
@@ -107,11 +135,10 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     // Follow 4A Directions and obtain an array of USERS.
     private void requestUsers()
     {
-        //System.out.println("* * * REQUEST USERS ...");
         try
         {   run();   }
         catch (Exception e)
-        {   System.out.println("* * * Exception Raised: " + e);   }
+        {   System.out.println("* * * RequestUsers - Exception Raised: " + e);   }
 
     }
 
@@ -168,7 +195,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         System.out.println("* * * DisplayListActivity - OnClickProfile...");
         boolean signedInUser = false;
         User picked_user     = null;
-        Intent profileIntent = new Intent(this, AccountProfileActivity.class);
+        profileIntent = new Intent(this, AccountProfileActivity.class);
 
         TextView profileView = v.findViewById(R.id.account_name_text_view);
         String cur_name      = (String) profileView.getText();
@@ -176,30 +203,48 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         if (cur_name.compareTo(user_name) == 0)
         {
             signedInUser = true;
-            picked_user = curGoogleUser;
+            picked_user  = curGoogleUser;
+            System.out.println("* * * Google USER Detected ??? >>>" + signedInUser);
         }
         else  // Obtain the chosen user thats not signed in.
         {
             for (User u : user_accounts)
             {
                 if (u.getName().compareTo(cur_name) == 0) // match found.
-                {   picked_user = u;   break;   }
+                {   picked_user = u;   break; }
             }
         }
 
         profileIntent.putExtra("LoggedInUser", signedInUser);
 
-        profileIntent.putExtra("user_name",    picked_user.getName());
-        profileIntent.putExtra("user_name2",   picked_user.getUsername());
-        profileIntent.putExtra("user_ID",      picked_user.getId());
-        profileIntent.putExtra("user_email",   picked_user.getEmail());
-        profileIntent.putExtra("user_street",  picked_user.getAddress().getStreet());
-        profileIntent.putExtra("user_suite",   picked_user.getAddress().getSuite());
-        profileIntent.putExtra("user_city",    picked_user.getAddress().getCity());
-        profileIntent.putExtra("user_zipcode", picked_user.getAddress().getZipcode());
+        saveExtra("user_name", picked_user.getName());
+        saveExtra("user_name2", picked_user.getUsername());
+        saveExtra("user_ID", picked_user.getId());
+        saveExtra("user_email", picked_user.getEmail());
+
+        saveExtra("user_street", picked_user.getAddress().getStreet());
+        saveExtra("user_suite", picked_user.getAddress().getSuite());
+        saveExtra("user_city", picked_user.getAddress().getCity());
+        saveExtra("user_zipcode", picked_user.getAddress().getZipcode());
+
+        if(!signedInUser)  // Save User info if other account picked to save info.
+        {                  // Maybe use saved Preferences.
+            saveExtra("g_user_name", curGoogleUser.getName());
+            saveExtra("g_user_name2", curGoogleUser.getUsername());
+            saveExtra("g_user_ID", curGoogleUser.getId());
+            saveExtra("g_user_email", curGoogleUser.getEmail());
+
+            saveExtra("g_user_street", curGoogleUser.getAddress().getStreet());
+            saveExtra("g_user_suite", curGoogleUser.getAddress().getSuite());
+            saveExtra("g_user_city", curGoogleUser.getAddress().getCity());
+            saveExtra("g_user_zipcode", curGoogleUser.getAddress().getZipcode());
+        }
 
         startActivity(profileIntent);  // Start Activity with certain data/info.
     }
+
+    public void saveExtra(String label, String value)
+    {   profileIntent.putExtra(label, value);   }
 
     @Override
     public void onClick(View v)

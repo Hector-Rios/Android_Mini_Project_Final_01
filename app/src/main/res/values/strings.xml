@@ -11,6 +11,9 @@
         <item>"Tommy"</item>
         <item>"Devon"</item>
     </string-array>
+    <string name="channel_name">Android_Prj_Final Notifications Channel</string>
+    <string name="channel_description">Don\'t Forget About Me. Maybe ?</string>
+
     <string name="server_client_id" tools:ignore="TypographyDashes">"885224961259-1fng7oc3fglddkp0ukqle7uvs6l6mh3f.apps.googleusercontent.com"</string>
     <string name="SignOut_Text_01">[ Sign Out ]</string>
     <string name="acct_profile_01">Account Profile</string>
