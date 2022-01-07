@@ -45,8 +45,8 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     protected Intent profileIntent;
     protected boolean firstSignIn = false;
     protected boolean validNotify = true;
-    protected SharedPreferences googleUserData = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
-    protected SharedPreferences currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
+    protected SharedPreferences googleUserData;  // = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
+    protected SharedPreferences currentUserData; // = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
 
     protected final String URL = "http://jsonplaceholder.typicode.com/users";
     protected OkHttpClient client;
@@ -56,10 +56,14 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_list);
 
+        googleUserData = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
+        currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
+
+
         findViewById(R.id.sign_out_button_1).setOnClickListener(this);
         Intent intent = this.getIntent();
 
-        boolean localStatus = intent.getBooleanExtra("isSignedInUser", false);
+        // boolean localStatus = intent.getBooleanExtra("isSignedInUser", false);
         firstSignIn = intent.getBooleanExtra("initialSignIn", false);
 
         String[] emptySlot1 = new String[11];
@@ -72,20 +76,14 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
 
             curGoogleUser = new User(user_name, user_name2, user_ID, user_email);
         }
-
-        if (!firstSignIn || localStatus)
+        else
         {
-            //System.out.println("GoogleUser Details Updated. ");
-            updateCurrentGoogleUser();
+            updateCurrentGoogleUser(); // Purpose is to update logged in user information with activity.
         }
 
         requestUsers();  // Creates a request to obtain an array of users.
 
-        /*if (user_accounts == null)
-        {   System.out.println("* * * User Account IS NULL ...");  }
-        else
-        {   System.out.println("* * * User Account IS * NOT * NULL ...");   }*/
-
+        // Generate basic list view of accounts.
         RecyclerView myRecycleView = findViewById(R.id.recycler_view);
         PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(emptySlot1, emptySlot1);
         myRecycleView.setAdapter(myAdaptation);
@@ -100,17 +98,17 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         if (curGoogleUser == null)
         {   curGoogleUser = new User();   }
 
-        SharedPreferences givenPref = getSharedPreferences("sharedPref_GoogleUser", Context.MODE_PRIVATE);
+        SharedPreferences givenPref = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
 
-        String iName     = givenPref.getString("input_01", "");
-        String iUserName = givenPref.getString("input_02", "");
-        String iEmail    = givenPref.getString("input_03", "");
-        String i_ID      = givenPref.getString("input_04", "");
+        String iName     = givenPref.getString("user_name", "Error-Pref");
+        String iUserName = givenPref.getString("user_name2", "Error-Pref");
+        String iEmail    = givenPref.getString("user_email", "Error-Pref");
+        String i_ID      = givenPref.getString("user_ID", "Error-Pref");
 
-        String iStreet  = givenPref.getString("input_05", "[ Enter Street Value ]");
-        String iSuite   = givenPref.getString("input_06", "[ Enter Suite Value ]");
-        String iCity    = givenPref.getString("input_07", "[ Enter City Value ]");
-        String iZipcode = givenPref.getString("input_08", "[ Enter ZipCode Value ]");
+        String iStreet  = givenPref.getString("user_street", "[ Enter Street Value ]");
+        String iSuite   = givenPref.getString("user_suite", "[ Enter Suite Value ]");
+        String iCity    = givenPref.getString("user_city", "[ Enter City Value ]");
+        String iZipcode = givenPref.getString("user_zipcode", "[ Enter ZipCode Value ]");
 
         curGoogleUser.updatePersonal(iName, iUserName, iEmail, i_ID);
         curGoogleUser.updateAddress(iStreet, iSuite, iCity, iZipcode);
@@ -247,7 +245,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         saveExtra("user_city", picked_user.getAddress().getCity());
         saveExtra("user_zipcode", picked_user.getAddress().getZipcode());
 
-        if(!signedInUser)  // Save User info if other account picked to save info.
+        /*if(!signedInUser)  // Save User info if other account picked to save info.
         {                  // Maybe use saved Preferences.
             saveExtra("g_user_name", curGoogleUser.getName());
             saveExtra("g_user_name2", curGoogleUser.getUsername());
@@ -258,7 +256,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
             saveExtra("g_user_suite", curGoogleUser.getAddress().getSuite());
             saveExtra("g_user_city", curGoogleUser.getAddress().getCity());
             saveExtra("g_user_zipcode", curGoogleUser.getAddress().getZipcode());
-        }
+        }*/
 
         validNotify = false;   // Shift from one activity to next shouldn't cause notification.
         startActivity(profileIntent);  // Start Activity with certain data/info.

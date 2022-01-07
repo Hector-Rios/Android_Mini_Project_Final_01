@@ -32,12 +32,11 @@ public class AccountProfileActivity extends AppCompatActivity {
     protected String user_zipcode;
     protected SharedPreferences sharedPref;
 
-    protected SharedPreferences googleUserData = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
-    protected SharedPreferences currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
+    protected SharedPreferences googleUserData; // = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
+    protected SharedPreferences currentUserData; // = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
 
     protected boolean isGoogleUser = false;   // Identifier for Signed in Account.
     protected boolean validNotify = true;     // Notification Pop up control parameter
-
 
     private static final String CHANNEL_ID = "CHANNEL_01";
     private static final int NOTIFICATION_ID = 1001;
@@ -46,6 +45,9 @@ public class AccountProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_profile);
+
+        googleUserData = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
+        currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
 
         Intent intent = this.getIntent();
 
