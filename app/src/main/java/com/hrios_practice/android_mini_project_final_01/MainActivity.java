@@ -1,9 +1,15 @@
 package com.hrios_practice.android_mini_project_final_01;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,11 +29,13 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "SignInActivity";
-    private static final int RC_SIGN_IN = 9001;
+    private static final String TAG          = "SignInActivity";
+    private static final int RC_SIGN_IN      = 9001;
+    private static final String CHANNEL_ID   = "CHANNEL_03";
+    private static final int NOTIFICATION_ID = 1004;
+    protected boolean validNotify = true;
 
     protected GoogleSignInClient mGoogleSignInClient;
-    // protected TextView mStatusTextView;
 
 /*
 * Note: Put a flag that deletes the history of the previous activity.
@@ -39,13 +47,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.sign_in_button_1).setOnClickListener(this);
         System.out.println("OnCreate. Before SetUpGoogleSignIn ...");
+
         setUpGoogleSignIn(); // Sets up Google Sign in stuff.
+        createNotificationChannel();
     }
 
     public void setUpGoogleSignIn() {
         // [START configure_signin] Configure sign-in to request the user's ID,
-        // email address, and basic profile. ID and basic profile are
-        // included in DEFAULT_SIGN_IN.
+        // email address, and basic profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();      // [END configure_signin]
@@ -124,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra("SignInAccountEmail", email);
             intent.putExtra("initialSignIn", true);
 
+            validNotify = false;
             startActivity(intent);
 
         } else {
@@ -134,29 +144,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /*private void displayAccountRecyclerView(String name, String ID, String email)
-    {
-        // Get Information in the form of an array.
-        ArrayList<String> givenNames = new ArrayList<>();
-        givenNames.add("name");
-
-        String[] ppl_names = this.getResources().getStringArray(R.array.person_list);
-        givenNames.addAll(Arrays.asList(ppl_names));
-        ppl_names[0] = name;
-
-        // ID generated array list.
-        Integer [] givenID = new Integer[givenNames.size()]; // { Random.nextInt(100) };
-        Random myGuess = new Random();
-
-        for ( int i = 0; i < givenID.length; i++)
-        {    givenID[i] = myGuess.nextInt(100);    }
-
-        // Create RecyclerView and pass information to it.
-        RecyclerView myRecycleView = findViewById(R.id.recycler_view);
-        PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(ppl_names, givenID);
-        myRecycleView.setAdapter(myAdaptation);
-    }*/
-
 
     @Override
     public void onClick(View v) {   // Handles click events for this activity.
@@ -166,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // Key lifecycle methods.
     @Override
     public void onStart() {
         super.onStart();
@@ -175,6 +163,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         System.out.print("* * * onStart. ");
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
-        // [END on_start_sign_in]
+    }   // [END on_start_sign_in]
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("* onResume Begin - DisplayListActivity *");
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        System.out.println("* onPause Begin - DisplayListActivity *");
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        System.out.println("* onStop Begin - DisplayListActivity *");
+
+        if (validNotify)
+        {   produceNotification();   }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        System.out.println("* onDestroy Begin - DisplayListActivity *");
+    }
+
+    // Notification Methods for clickable returning notification operation.
+    // Create Notification for exiting activity.
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+
+            channel.setDescription(description);
+
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+            //System.out.println("* * * CreateNotificationChannel - Finished Correctly.");
+        }
+    }
+
+    private void produceNotification()
+    {
+        Intent returnIntent = new Intent(this, MainActivity.class);
+        returnIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, returnIntent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Reminder Notification")
+                .setContentText("Forget me not Message ... ")
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        //System.out.println("* * * onClick 01 - Version 01");
     }
 }

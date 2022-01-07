@@ -1,11 +1,17 @@
 package com.hrios_practice.android_mini_project_final_01;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -27,6 +33,8 @@ import okhttp3.ResponseBody;
 
 public class DisplayListActivity extends AppCompatActivity implements View.OnClickListener{
 
+    private static final String CHANNEL_ID      = "CHANNEL_02";
+    private static final int NOTIFICATION_ID    = 1003;
     protected String user_name;
     protected String user_name2;
     protected String user_ID;
@@ -36,6 +44,9 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     private   User[] user_accounts;
     protected Intent profileIntent;
     protected boolean firstSignIn = false;
+    protected boolean validNotify = true;
+    protected SharedPreferences googleUserData = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
+    protected SharedPreferences currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
 
     protected final String URL = "http://jsonplaceholder.typicode.com/users";
     protected OkHttpClient client;
@@ -53,8 +64,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
 
         String[] emptySlot1 = new String[11];
 
-        if (firstSignIn)
-        {
+        if (firstSignIn) {
             user_name   = intent.getStringExtra("SignInName");
             user_name2  = intent.getStringExtra("SignInName2");
             user_ID     = intent.getStringExtra("SignInAccountID");
@@ -63,7 +73,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
             curGoogleUser = new User(user_name, user_name2, user_ID, user_email);
         }
 
-        if (!firstSignIn && localStatus)
+        if (!firstSignIn || localStatus)
         {
             //System.out.println("GoogleUser Details Updated. ");
             updateCurrentGoogleUser();
@@ -79,7 +89,10 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         RecyclerView myRecycleView = findViewById(R.id.recycler_view);
         PersonAccountAdaptor myAdaptation = new PersonAccountAdaptor(emptySlot1, emptySlot1);
         myRecycleView.setAdapter(myAdaptation);
+
+        createNotificationChannel(); // Notification Update.
     }
+
 
     // Updates the Signed in User's Address based on given input.
     private void updateCurrentGoogleUser()
@@ -195,14 +208,18 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         System.out.println("* * * DisplayListActivity - OnClickProfile...");
         boolean signedInUser = false;
         User picked_user     = null;
+        SharedPreferences.Editor googleEdit = googleUserData.edit();
         profileIntent = new Intent(this, AccountProfileActivity.class);
+
+        // profileIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // profileIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         TextView profileView = v.findViewById(R.id.account_name_text_view);
         String cur_name      = (String) profileView.getText();
 
         if (cur_name.compareTo(user_name) == 0)
         {
-            signedInUser = true;
+            signedInUser = true; // Identifier for if the google user was clicked on.
             picked_user  = curGoogleUser;
             System.out.println("* * * Google USER Detected ??? >>>" + signedInUser);
         }
@@ -215,7 +232,10 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
             }
         }
 
-        profileIntent.putExtra("LoggedInUser", signedInUser);
+        //profileIntent.putExtra("isGoogleUser", signedInUser);    // Identifier for Signed in Account.
+        googleEdit.putBoolean("isGoogleUser", signedInUser);   googleEdit.apply();
+
+        profileIntent.putExtra("FromListActivity", true);  // Identifier for Data Source.
 
         saveExtra("user_name", picked_user.getName());
         saveExtra("user_name2", picked_user.getUsername());
@@ -240,6 +260,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
             saveExtra("g_user_zipcode", curGoogleUser.getAddress().getZipcode());
         }
 
+        validNotify = false;   // Shift from one activity to next shouldn't cause notification.
         startActivity(profileIntent);  // Start Activity with certain data/info.
     }
 
@@ -271,6 +292,90 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     {
         Intent intent = new Intent(this, MainActivity.class);
         // intent.putExtra("SignInAccountEmail", email);
+
+        validNotify = false;   // Shift from one activity to next shouldn't cause notification.
         startActivity(intent);
+    }
+
+    // Key Lifecycle methods.
+    @Override
+    protected void onStart() {
+        super.onStart();
+        System.out.println("* onStart Begin - DisplayListActivity *");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("* onResume Begin - DisplayListActivity *");
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        System.out.println("* onPause Begin - DisplayListActivity *");
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        System.out.println("* onStop Begin - DisplayListActivity *");
+
+        if (validNotify)
+        {   produceNotification();   }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        System.out.println("* onDestroy Begin - DisplayListActivity *");
+
+    }
+
+    // Create Notification for exiting activity.
+    private void createNotificationChannel() {
+
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+
+            channel.setDescription(description);
+
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+            //System.out.println("* * * CreateNotificationChannel - Finished Correctly.");
+        }
+    }
+
+    private void produceNotification()
+    {
+        Intent returnIntent = new Intent(this, DisplayListActivity.class);
+        returnIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, returnIntent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Reminder Notification")
+                .setContentText("Forget me not Message ... ")
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        //System.out.println("* * * onClick 01 - Version 01");
     }
 }
