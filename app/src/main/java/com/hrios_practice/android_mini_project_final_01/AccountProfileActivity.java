@@ -51,24 +51,10 @@ public class AccountProfileActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
 
-        //isGoogleUser = intent.getBooleanExtra("isGoogleUser", false);
         isGoogleUser = googleUserData.getBoolean("isGoogleUser", false);
 
         System.out.println("* * * OnCREATE gStatus - " + isGoogleUser);
 
-        //if (isGoogleUser) {
-        //    sharedPref = getSharedPreferences("sharedPref_UserMemory", Context.MODE_PRIVATE);
-        //}
-
-        /*user_name = intent.getStringExtra("user_name");
-        user_name2 = intent.getStringExtra("user_name2");
-        user_ID = intent.getStringExtra("user_ID");
-        user_email = intent.getStringExtra("user_email");
-
-        user_street = intent.getStringExtra("user_street");
-        user_suite = intent.getStringExtra("user_suite");
-        user_city = intent.getStringExtra("user_city");
-        user_zipcode = intent.getStringExtra("user_zipcode");*/
         setValidProfileDetailsToView(intent);
 
         //displayUserProfile();
@@ -162,11 +148,6 @@ public class AccountProfileActivity extends AppCompatActivity {
             saveGoogleUserInfo();
         }
 
-        // Change gStatus state in pref to default value - false.
-        SharedPreferences.Editor givenEdit = sharedPref.edit();
-        givenEdit.putBoolean("gStatus", false);
-        givenEdit.apply();
-
         // NOTE PUT isGoogleUser FALSE FLAG HERE AS ITS RETURNING TO LIST * * *
         SharedPreferences.Editor myEdit = googleUserData.edit();
         myEdit.putBoolean("isGoogleUser", false); // reset google user log in ID status
@@ -236,11 +217,6 @@ public class AccountProfileActivity extends AppCompatActivity {
         SharedPreferences.Editor myEdit = googleUserData.edit();
         myEdit.putBoolean("isGoogleUser", isGoogleUser);
 
-        //TextView profileName  = findViewById(R.id.profile_value_name);
-        //TextView profileName2 = findViewById(R.id.profile_username_value01);
-        //TextView profileEmail = findViewById(R.id.profile_email);
-        //TextView profileID    = findViewById(R.id.profile_id_value);
-
         EditText profileStreet  = findViewById(R.id.editText_street_input);
         EditText profileSuite   = findViewById(R.id.EditText_suite_input);
         EditText profileCity    = findViewById(R.id.editText_city_value);
@@ -259,23 +235,6 @@ public class AccountProfileActivity extends AppCompatActivity {
         myEdit.apply();
         System.out.println("* * * Google Profile - Preferences SAVED for googleUser. ");
     }
-    /*private void saveCurrentProfile() {
-        SharedPreferences.Editor givenEdit = sharedPref.edit();
-
-        givenEdit.putBoolean("gStatus", isGoogleUser);
-
-        givenEdit.putString("cur_user_name", user_name);
-        givenEdit.putString("cur_user_name2", user_name2);
-        givenEdit.putString("cur_user_email", user_email);
-        givenEdit.putString("cur_user_id", user_ID);
-
-        givenEdit.putString("cur_user_street", user_street);
-        givenEdit.putString("cur_user_suite", user_suite);
-        givenEdit.putString("cur_user_city", user_city);
-        givenEdit.putString("cur_user_zipcode", user_zipcode);
-
-        givenEdit.apply();
-    }*/
 
     // Save the Google User's information to upload again.
     @Override
@@ -294,51 +253,7 @@ public class AccountProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sharedPref = getSharedPreferences("sharedPref_UserMemory", Context.MODE_PRIVATE);
-        boolean loadSavedFile = sharedPref.getBoolean("FromNotification", false);
-
-        if (loadSavedFile)
-        {
-            //loadCurrentProfileToView();
-
-            //SharedPreferences.Editor myEdit = sharedPref.edit();
-            //myEdit.putBoolean("FromNotification", false);
-            //myEdit.apply();
-        }
     }
-
-    /*private void loadCurrentProfileToView() {
-        // Load the current profile.
-        sharedPref = getSharedPreferences("sharedPref_UserMemory", Context.MODE_PRIVATE);
-        isGoogleUser = sharedPref.getBoolean("gStatus", false);
-
-        if (isGoogleUser) {
-            System.out.println("Uploading GoogleUser to VIEW");
-            uploadUserData(
-                    sharedPref.getString("input_01", "ERROR???"),
-                    sharedPref.getString("input_02", "ERROR???"),
-                    sharedPref.getString("input_03", "ERROR???"),
-                    sharedPref.getString("input_04", "ERROR???"),
-                    sharedPref.getString("input_05", "ERROR???"),
-                    sharedPref.getString("input_06", "ERROR???"),
-                    sharedPref.getString("input_07", "ERROR???"),
-                    sharedPref.getString("input_08", "ERROR???")   );
-        }
-        else {
-            // regular user profile.
-            System.out.println("Uploading RegularUser to VIEW");
-            uploadUserData(
-                    sharedPref.getString("cur_user_name", "TUYO"),
-                    sharedPref.getString("cur_user_name2", ""),
-                    sharedPref.getString("cur_user_email", ""),
-                    sharedPref.getString("cur_user_id", ""),
-                    sharedPref.getString("cur_user_street", ""),
-                    sharedPref.getString("cur_user_suite", ""),
-                    sharedPref.getString("cur_user_city", ""),
-                    sharedPref.getString("cur_user_zipcode", "")   );
-        }
-    }*/
-
 
 
     // Key Lifecycle methods.
@@ -347,20 +262,6 @@ public class AccountProfileActivity extends AppCompatActivity {
         super.onStart();
         System.out.println("* onStart Begin - AccountProfileActivity *");
     }
-
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-        System.out.println("* onResume Begin - AccountProfileActivity *");
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        System.out.println("* onPause Begin - AccountProfileActivity *");
-
-    }*/
 
     @Override
     protected void onStop() {
@@ -376,33 +277,30 @@ public class AccountProfileActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             CharSequence name = getString(R.string.channel_name);
-            //CharSequence name_2 = getString(R.string.channel_name_2);
             String description = getString(R.string.channel_description);
-            //String description_2 = getString(R.string.channel_description_2);
 
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            //NotificationChannel channel_02 = new NotificationChannel(CHANNEL_02_ID, name_2, importance);
 
             channel.setDescription(description);
-            //channel_02.setDescription(description_2);
 
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
-            //notificationManager.createNotificationChannel(channel_02);
             System.out.println("* * * CreateNotificationChannel - Finished Correctly.");
         }
     }
 
     private void produceNotification()
     {
+        currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
+
         Intent returnIntent = new Intent(this, AccountProfileActivity.class);
         //returnIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, returnIntent, 0);
 
-        SharedPreferences.Editor myEdit = sharedPref.edit();
+        SharedPreferences.Editor myEdit = currentUserData.edit();
         myEdit.putBoolean("FromNotification", true);
         myEdit.apply();
 

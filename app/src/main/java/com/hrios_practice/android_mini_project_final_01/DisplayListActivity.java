@@ -245,19 +245,6 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         saveExtra("user_city", picked_user.getAddress().getCity());
         saveExtra("user_zipcode", picked_user.getAddress().getZipcode());
 
-        /*if(!signedInUser)  // Save User info if other account picked to save info.
-        {                  // Maybe use saved Preferences.
-            saveExtra("g_user_name", curGoogleUser.getName());
-            saveExtra("g_user_name2", curGoogleUser.getUsername());
-            saveExtra("g_user_ID", curGoogleUser.getId());
-            saveExtra("g_user_email", curGoogleUser.getEmail());
-
-            saveExtra("g_user_street", curGoogleUser.getAddress().getStreet());
-            saveExtra("g_user_suite", curGoogleUser.getAddress().getSuite());
-            saveExtra("g_user_city", curGoogleUser.getAddress().getCity());
-            saveExtra("g_user_zipcode", curGoogleUser.getAddress().getZipcode());
-        }*/
-
         validNotify = false;   // Shift from one activity to next shouldn't cause notification.
         startActivity(profileIntent);  // Start Activity with certain data/info.
     }
@@ -323,7 +310,6 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
 
         if (validNotify)
         {   produceNotification();   }
-
     }
 
     @Override
