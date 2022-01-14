@@ -32,7 +32,7 @@ public class AccountProfileActivity extends AppCompatActivity {
     protected String user_zipcode;
     protected SharedPreferences sharedPref;
 
-    protected SharedPreferences googleUserData; // = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
+    protected SharedPreferences googleUserData;//  = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
     protected SharedPreferences currentUserData; // = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
 
     protected boolean isGoogleUser = false;   // Identifier for Signed in Account.
@@ -46,20 +46,31 @@ public class AccountProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_profile);
 
-        googleUserData = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
+        googleUserData  = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
         currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
+
+        printGooglePref(googleUserData);
 
         Intent intent = this.getIntent();
 
         isGoogleUser = googleUserData.getBoolean("isGoogleUser", false);
-
-        System.out.println("* * * OnCREATE gStatus - " + isGoogleUser);
+        System.out.println("* * * OnCREATE isGoogleUser - " + isGoogleUser);
 
         setValidProfileDetailsToView(intent);
 
-        //displayUserProfile();
-
         createNotificationChannel();
+    }
+
+    // Purpose is to display specific information within a given savedPreferences.
+    private void printGooglePref(SharedPreferences gPref) {
+        System.out.println("# # # -> Given User Pref: " + gPref.toString());
+        System.out.println("user_name: " + gPref.getString("user_name", "ERROR???")
+                + "| " + gPref.getString("user_name2", "ERROR???")
+                + "| " + gPref.getString("user_ID", "ERROR???")
+                + "| " + gPref.getString("user_email", "ERROR???")
+                + "| " + gPref.getString("user_street", "ERROR???")
+                + "| " + gPref.getString("user_city", "ERROR???")
+                + "| " + gPref.getString("user_zipcode", "ERROR???"));
     }
 
     // Purpose is to make sure profile is saved/loaded correctly
@@ -67,40 +78,44 @@ public class AccountProfileActivity extends AppCompatActivity {
     private void setValidProfileDetailsToView(Intent intent)
     {
         boolean fromListActivity = intent.getBooleanExtra("FromListActivity", false);
+        boolean fromNotification = intent.getBooleanExtra("fromNotification", false);
+        //System.out.println("* * * fromNotification status: " + fromNotification);
 
+        // Just use an intent.
         if (fromListActivity) // If true -> Intent came from List Activity.
         {
             // save the current profile to needed specific sharedPreference(s).
             saveProfileToSharedPrefFromIntent(currentUserData, intent);
 
             if (isGoogleUser)
-            {   saveProfileToSharedPrefFromIntent(googleUserData, intent);   }
+            {    saveProfileToSharedPrefFromIntent(googleUserData, intent);    }
 
             // Upload the current profile data.
-            user_name  = intent.getStringExtra("user_name");
-            user_name2 = intent.getStringExtra("user_name2");
-            user_ID    = intent.getStringExtra("user_ID");
-            user_email = intent.getStringExtra("user_email");
+            user_name  = intent.getStringExtra("user_name");     user_name2 = intent.getStringExtra("user_name2");
+            user_ID    = intent.getStringExtra("user_ID");       user_email = intent.getStringExtra("user_email");
 
-            user_street  = intent.getStringExtra("user_street");
-            user_suite   = intent.getStringExtra("user_suite");
-            user_city    = intent.getStringExtra("user_city");
-            user_zipcode = intent.getStringExtra("user_zipcode");
+            user_street  = intent.getStringExtra("user_street"); user_suite   = intent.getStringExtra("user_suite");
+            user_city    = intent.getStringExtra("user_city");   user_zipcode = intent.getStringExtra("user_zipcode");
 
             // Displays given information into specific Views.
             uploadUserData(user_name, user_name2, user_email, user_ID, user_street, user_suite, user_city, user_zipcode);
-            // Done
-        }
+        }   // Done
         else
         {
             // Came from a Notification -> Upload the current profile into View.
             // Purpose to transfer GoogleAccount Info from SharedPreferences into the app View.
-            if (isGoogleUser)
-            {   loadProfileFromSharedPrefToView(googleUserData);    }
-            else
-            {   loadProfileFromSharedPrefToView(currentUserData);   }
-            // Done.
+            if (fromNotification)
+            {
+                // Upload intent information from notification return into sharedPref.
+                //saveProfileToSharedPrefFromIntent(googleUserData, intent);
+                //saveProfileToSharedPrefFromIntent(currentUserData, intent);
 
+                // printGooglePref(googleUserData);
+                if (isGoogleUser)
+                {   loadProfileFromSharedPrefToView(googleUserData);    }
+                else
+                {   loadProfileFromSharedPrefToView(currentUserData);   }
+            }   // Done.
         }
     }
 
@@ -124,7 +139,7 @@ public class AccountProfileActivity extends AppCompatActivity {
 
         // Launch main activity.
         Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         SharedPreferences.Editor myEdit = googleUserData.edit();
         myEdit.putBoolean("isGoogleUser", false); // reset google user log in ID status
@@ -139,19 +154,19 @@ public class AccountProfileActivity extends AppCompatActivity {
         // System.out.println("* * * ReturntoAccountList - Click *.");
         Intent intent = new Intent(this, DisplayListActivity.class);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // intent.putExtra("isSignedInUser", isGoogleUser);
 
-        intent.putExtra("isSignedInUser", isGoogleUser);
-
-        // System.out.println("* * * GOOGLE USER PICKED??? " + gStatus);
+        // System.out.println("* * * Returning to Account LIST: GOOGLE USER Status??? " + isGoogleUser);
         if (isGoogleUser)
         {   // Save Google user updated information.
             saveGoogleUserInfo();
         }
 
         // NOTE PUT isGoogleUser FALSE FLAG HERE AS ITS RETURNING TO LIST * * *
-        SharedPreferences.Editor myEdit = googleUserData.edit();
-        myEdit.putBoolean("isGoogleUser", false); // reset google user log in ID status
-        myEdit.apply();
+        //SharedPreferences.Editor myEdit = googleUserData.edit();
+        //myEdit.putBoolean("isGoogleUser", false); // reset google user log in ID status
+        //myEdit.apply();
+        printGooglePref(googleUserData);
 
         validNotify = false;
         startActivity(intent);
@@ -178,15 +193,19 @@ public class AccountProfileActivity extends AppCompatActivity {
     // Purpose is to update the current view with the saved data from a given SharedPreferences reference.
     private void loadProfileFromSharedPrefToView(SharedPreferences gPref)
     {
-        uploadUserData(
-                gPref.getString("user_name", "ERROR???"),
-                gPref.getString("user_name2", "ERROR???"),
-                gPref.getString("user_ID", "ERROR???"),
-                gPref.getString("user_email", "ERROR???"),
-                gPref.getString("user_street", "ERROR???"),
-                gPref.getString("user_suite", "ERROR???"),
-                gPref.getString("user_city", "ERROR???"),
-                gPref.getString("user_zipcode", "ERROR???")   );
+        System.out.println("Printout Pref before putting to view. ");
+        printGooglePref(gPref);
+        user_name    = gPref.getString("user_name", "ERROR???");
+        user_name2   = gPref.getString("user_name2", "ERROR???");
+        user_email   = gPref.getString("user_email", "ERROR???");
+        user_ID      = gPref.getString("user_ID", "ERROR???");
+        user_street  = gPref.getString("user_street", "ERROR???");
+        user_suite   = gPref.getString("user_suite", "ERROR???");
+        user_city    = gPref.getString("user_city", "ERROR???");
+        user_zipcode = gPref.getString("user_zipcode", "ERROR???");
+
+        uploadUserData(user_name, user_name2, user_email, user_ID,
+                       user_street, user_suite, user_city, user_zipcode);
     }
 
     // Purpose is to display the given information parameters into specific Views for the Profile Display/
@@ -222,18 +241,13 @@ public class AccountProfileActivity extends AppCompatActivity {
         EditText profileCity    = findViewById(R.id.editText_city_value);
         EditText profileZipcode = findViewById(R.id.editText_zipcode_value);
 
-        myEdit.putString("user_name", user_name); // Save current view input.
-        myEdit.putString("user_name2", user_name2); // Save current view input.
-        myEdit.putString("user_email", user_email); // Save current view input.
-        myEdit.putString("user_ID", user_ID); // Save current view input.
-
         myEdit.putString("user_street", profileStreet.getText().toString()); // Save current view input.
         myEdit.putString("user_suite", profileSuite.getText().toString()); // Save current view input.
         myEdit.putString("user_city", profileCity.getText().toString()); // Save current view input.
         myEdit.putString("user_zipcode", profileZipcode.getText().toString()); // Save current view input.
 
         myEdit.apply();
-        System.out.println("* * * Google Profile - Preferences SAVED for googleUser. ");
+        // System.out.println("* * * Google Profile - Preferences SAVED for googleUser. ");
     }
 
     // Save the Google User's information to upload again.
@@ -247,26 +261,7 @@ public class AccountProfileActivity extends AppCompatActivity {
         if (validNotify)    // If valid notification state -> send notification.
         {   produceNotification();   }
 
-        System.out.println("* * * onPause State Reached");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-
-    // Key Lifecycle methods.
-    @Override
-    protected void onStart() {
-        super.onStart();
-        System.out.println("* onStart Begin - AccountProfileActivity *");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        System.out.println("* onStop Begin - AccountProfileActivity *");
+        // System.out.println("* * * onPause State Reached");
     }
 
     // Create Notification for exiting activity.
@@ -288,26 +283,43 @@ public class AccountProfileActivity extends AppCompatActivity {
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
-            System.out.println("* * * CreateNotificationChannel - Finished Correctly.");
+            // System.out.println("* * * CreateNotificationChannel - Finished Correctly.");
         }
     }
 
     private void produceNotification()
     {
-        currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
+        // currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
+        EditText profileStreet  = findViewById(R.id.editText_street_input);
+        EditText profileSuite   = findViewById(R.id.EditText_suite_input);
+        EditText profileCity    = findViewById(R.id.editText_city_value);
+        EditText profileZipcode = findViewById(R.id.editText_zipcode_value);
 
         Intent returnIntent = new Intent(this, AccountProfileActivity.class);
         //returnIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, returnIntent, 0);
 
-        SharedPreferences.Editor myEdit = currentUserData.edit();
-        myEdit.putBoolean("FromNotification", true);
-        myEdit.apply();
+        returnIntent.putExtra("fromNotification", true);
+        // Save current profile information.
+        returnIntent.putExtra("user_name", user_name);
+        returnIntent.putExtra("user_name2", user_name2);
+        returnIntent.putExtra("user_ID", user_ID);
+        returnIntent.putExtra("user_email", user_email);
+        returnIntent.putExtra("user_street", profileStreet.getText().toString());
+        returnIntent.putExtra("user_suite", profileSuite.getText().toString());
+        returnIntent.putExtra("user_city", profileCity.getText().toString());
+        returnIntent.putExtra("user_zipcode", profileZipcode.getText().toString());
+
+        System.out.println("From notification intent: street: " + profileStreet.getText().toString()
+                            + " Suite: " + profileSuite.getText().toString()
+                            + " city:  " + profileCity.getText().toString()
+                            + " zipcode:  " + profileZipcode.getText().toString());
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, returnIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Reminder Notification")
-                .setContentText("Forget me not Message ... ")
+                .setContentTitle("Forget Me Not - Reminder Notification")
+                .setContentText("Don't Forget About Me  ... ")
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
@@ -316,6 +328,6 @@ public class AccountProfileActivity extends AppCompatActivity {
 
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(NOTIFICATION_ID, builder.build());
-        System.out.println("* * * onClick 01 - Version 01");
+        //System.out.println("* * * onClick fromNotification - Version 01");
     }
 }

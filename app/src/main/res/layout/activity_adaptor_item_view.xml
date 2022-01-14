@@ -14,27 +14,37 @@
     <androidx.cardview.widget.CardView
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        app:cardBackgroundColor="#B3F8FF">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:onClick="onClickProfile">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/account_name_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:onClick="onClickProfile"
+                android:text="[ Basic Text ]"
+                android:textAlignment="center"
                 android:textSize="25sp" />
 
             <ImageView
                 android:id="@+id/account_img_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:srcCompat="@tools:sample/avatars"
-                android:contentDescription="TODO" />
+                android:layout_height="156dp"
+                android:contentDescription="TODO"
+                android:onClick="onClickProfileImage"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/AccountDisplay_Divider"
+                android:layout_width="match_parent"
+                android:layout_height="9dp"
+                android:background="#092481" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

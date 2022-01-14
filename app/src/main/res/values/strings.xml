@@ -20,4 +20,8 @@
     <string name="profile_account_address">[ Profile Account Address ]</string>
     <string name="street">Street</string>
     <string name="enter_street_value">[ Enter Street Value ]</string>
+    <string name="dialog_prompt_title">Use Camera for Profile Image.</string>
+    <string name="dialog_prompt_01">Use Camera for Profile Image</string>
+    <string name="dialog_prompt_02">Proceed</string>
+    <string name="dialog_prompt_03">Cancel </string>
 </resources>

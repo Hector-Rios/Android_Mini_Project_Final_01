@@ -32,11 +32,13 @@ public class PersonAccountAdaptor extends RecyclerView.Adapter{
 
                 AccountNameTextView = itemView.findViewById(R.id.account_name_text_view);
                 AccountProfileImgView = itemView.findViewById(R.id.account_img_view);
+
             }
 
             public void bind(String AccountName, String ImageLink)
             {
                 AccountNameTextView.setText(AccountName);
+                AccountProfileImgView.setTag(AccountName);
 
                 Picasso.get().load(ImageLink).into(AccountProfileImgView);
             }

@@ -37,16 +37,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     protected GoogleSignInClient mGoogleSignInClient;
 
-/*
-* Note: Put a flag that deletes the history of the previous activity.
-* */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.sign_in_button_1).setOnClickListener(this);
-        System.out.println("OnCreate. Before SetUpGoogleSignIn ...");
+        // System.out.println("OnCreate. Before SetUpGoogleSignIn ...");
 
         setUpGoogleSignIn(); // Sets up Google Sign in stuff.
         createNotificationChannel();
@@ -99,10 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-            // Signed in successfully, show authenticated UI.
             updateUI(account);
-            // Prob launch new activity. * * *
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -121,26 +115,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String user_name = account.getGivenName();
             String ID = account.getId();
             String email = account.getEmail();
-            // Prob launch new activity. * * *
+
             // Intent creation
             Intent intent = new Intent(this, DisplayListActivity.class);
+
             // Update Information values
-            // Do this in the activivty and not here. displayAccountRecyclerView(name, ID, email);
-            // Launch new Activity.
             intent.putExtra("SignInName", name);
             intent.putExtra("SignInName2", user_name);
             intent.putExtra("SignInAccountID", ID);
             intent.putExtra("SignInAccountEmail", email);
             intent.putExtra("initialSignIn", true);
 
-            validNotify = false;
-            startActivity(intent);
+            validNotify = false;     // Notification flag.
+            startActivity(intent);   // Launch new Activity.
 
         } else {
-            //mStatusTextView.setText(R.string.signed_out);
             System.out.println("* * * Account returned as NULL.");
-            //findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
     }
 
@@ -148,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {   // Handles click events for this activity.
         if (v.getId() == R.id.sign_in_button_1) {
-            System.out.println("Sign In Button Pressed ... ");
+            // System.out.println("Sign In Button Pressed ... ");
             SignIn_By_Click(v);
         }
     }
@@ -160,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // [START on_start_sign_in] Check for existing Google Sign In account, if the
         // user is already signed in the GoogleSignInAccount will be non-null.
-        System.out.print("* * * onStart. ");
+        // System.out.print("* * * onStart. ");
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
     }   // [END on_start_sign_in]
@@ -168,21 +158,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("* onResume Begin - DisplayListActivity *");
+        // System.out.println("* onResume Begin - DisplayListActivity *");
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        System.out.println("* onPause Begin - DisplayListActivity *");
+        // System.out.println("* onPause Begin - DisplayListActivity *");
 
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        System.out.println("* onStop Begin - DisplayListActivity *");
+        // System.out.println("* onStop Begin - DisplayListActivity *");
 
         if (validNotify)
         {   produceNotification();   }
@@ -191,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        System.out.println("* onDestroy Begin - DisplayListActivity *");
+        // System.out.println("* onDestroy Begin - DisplayListActivity *");
     }
 
     // Notification Methods for clickable returning notification operation.
@@ -225,8 +215,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Reminder Notification")
-                .setContentText("Forget me not Message ... ")
+                .setContentTitle("Forget Me Not - Reminder Notification")
+                .setContentText("Don't Forget About Me  ... ")
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
@@ -235,6 +225,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(NOTIFICATION_ID, builder.build());
-        //System.out.println("* * * onClick 01 - Version 01");
     }
 }
