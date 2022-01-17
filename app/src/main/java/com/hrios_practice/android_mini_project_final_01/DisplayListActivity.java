@@ -83,9 +83,7 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
         else {
             updateCurrentGoogleUser(); // Purpose is to update logged in user information with activity.
         }
-
-        // System.out.println("* * * curGoogleUSER: " + curGoogleUser);
-
+        
         requestUsers();  // Creates a request to obtain an array of users.
 
         // Generate basic list view of accounts as placeholders while images load.

@@ -21,7 +21,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/border_linear_layout">
 
             <TextView
                 android:id="@+id/account_name_text_view"
@@ -30,21 +31,17 @@
                 android:onClick="onClickProfile"
                 android:text="[ Basic Text ]"
                 android:textAlignment="center"
-                android:textSize="25sp" />
+                android:textColor="#000000"
+                android:textSize="25sp"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <ImageView
                 android:id="@+id/account_img_view"
                 android:layout_width="match_parent"
-                android:layout_height="156dp"
+                android:layout_height="150dp"
                 android:contentDescription="TODO"
                 android:onClick="onClickProfileImage"
                 tools:srcCompat="@tools:sample/avatars" />
-
-            <TextView
-                android:id="@+id/AccountDisplay_Divider"
-                android:layout_width="match_parent"
-                android:layout_height="9dp"
-                android:background="#092481" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

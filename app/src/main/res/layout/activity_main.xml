@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="monospace"
         android:text="@string/SignIn_Text_01"
+        android:textColor="#040404"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

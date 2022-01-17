@@ -30,7 +30,6 @@ public class AccountProfileActivity extends AppCompatActivity {
     protected String user_suite;
     protected String user_city;
     protected String user_zipcode;
-    protected SharedPreferences sharedPref;
 
     protected SharedPreferences googleUserData;//  = getSharedPreferences("googleUserData", Context.MODE_PRIVATE);
     protected SharedPreferences currentUserData; // = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
@@ -54,7 +53,7 @@ public class AccountProfileActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
 
         isGoogleUser = googleUserData.getBoolean("isGoogleUser", false);
-        System.out.println("* * * OnCREATE isGoogleUser - " + isGoogleUser);
+        // System.out.println("* * * OnCREATE isGoogleUser - " + isGoogleUser);
 
         setValidProfileDetailsToView(intent);
 
@@ -106,10 +105,6 @@ public class AccountProfileActivity extends AppCompatActivity {
             // Purpose to transfer GoogleAccount Info from SharedPreferences into the app View.
             if (fromNotification)
             {
-                // Upload intent information from notification return into sharedPref.
-                //saveProfileToSharedPrefFromIntent(googleUserData, intent);
-                //saveProfileToSharedPrefFromIntent(currentUserData, intent);
-
                 // printGooglePref(googleUserData);
                 if (isGoogleUser)
                 {   loadProfileFromSharedPrefToView(googleUserData);    }
@@ -231,8 +226,8 @@ public class AccountProfileActivity extends AppCompatActivity {
 
     // Purpose is to update the GoogleUser SharedPref with input from user.
     private void saveGoogleUserInfo()
-    {
-        // Save here.
+    {   // Save here.
+
         SharedPreferences.Editor myEdit = googleUserData.edit();
         myEdit.putBoolean("isGoogleUser", isGoogleUser);
 
@@ -246,8 +241,7 @@ public class AccountProfileActivity extends AppCompatActivity {
         myEdit.putString("user_city", profileCity.getText().toString()); // Save current view input.
         myEdit.putString("user_zipcode", profileZipcode.getText().toString()); // Save current view input.
 
-        myEdit.apply();
-        // System.out.println("* * * Google Profile - Preferences SAVED for googleUser. ");
+        myEdit.apply();   // System.out.println("* * * Google Profile - Preferences SAVED for googleUser. ");
     }
 
     // Save the Google User's information to upload again.
@@ -260,8 +254,6 @@ public class AccountProfileActivity extends AppCompatActivity {
 
         if (validNotify)    // If valid notification state -> send notification.
         {   produceNotification();   }
-
-        // System.out.println("* * * onPause State Reached");
     }
 
     // Create Notification for exiting activity.
@@ -289,30 +281,11 @@ public class AccountProfileActivity extends AppCompatActivity {
 
     private void produceNotification()
     {
-        // currentUserData = getSharedPreferences("profileDisplayData", Context.MODE_PRIVATE);
-        EditText profileStreet  = findViewById(R.id.editText_street_input);
-        EditText profileSuite   = findViewById(R.id.EditText_suite_input);
-        EditText profileCity    = findViewById(R.id.editText_city_value);
-        EditText profileZipcode = findViewById(R.id.editText_zipcode_value);
-
         Intent returnIntent = new Intent(this, AccountProfileActivity.class);
         //returnIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         returnIntent.putExtra("fromNotification", true);
         // Save current profile information.
-        returnIntent.putExtra("user_name", user_name);
-        returnIntent.putExtra("user_name2", user_name2);
-        returnIntent.putExtra("user_ID", user_ID);
-        returnIntent.putExtra("user_email", user_email);
-        returnIntent.putExtra("user_street", profileStreet.getText().toString());
-        returnIntent.putExtra("user_suite", profileSuite.getText().toString());
-        returnIntent.putExtra("user_city", profileCity.getText().toString());
-        returnIntent.putExtra("user_zipcode", profileZipcode.getText().toString());
-
-        System.out.println("From notification intent: street: " + profileStreet.getText().toString()
-                            + " Suite: " + profileSuite.getText().toString()
-                            + " city:  " + profileCity.getText().toString()
-                            + " zipcode:  " + profileZipcode.getText().toString());
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, returnIntent, 0);
 
