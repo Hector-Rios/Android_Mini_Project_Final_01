@@ -16,10 +16,12 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".AccountProfileActivity"
+            android:screenOrientation="sensor"
             android:exported="false" />
         <activity
             android:name=".DisplayListActivity"
-            android:exported="true" />
+            android:screenOrientation="sensor"
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"

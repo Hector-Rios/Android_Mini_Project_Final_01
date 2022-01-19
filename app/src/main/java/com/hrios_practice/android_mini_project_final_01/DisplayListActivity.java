@@ -79,11 +79,16 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
             user_email  = intent.getStringExtra("SignInAccountEmail");
 
             curGoogleUser = new User(user_name, user_name2, user_ID, user_email);
+            curGoogleUser.updateAddress(
+                    googleUserData.getString("user_street", ""),
+                    googleUserData.getString("user_suite", ""),
+                    googleUserData.getString("user_city", ""),
+                    googleUserData.getString("user_zipcode", ""));
         }
         else {
             updateCurrentGoogleUser(); // Purpose is to update logged in user information with activity.
         }
-        
+
         requestUsers();  // Creates a request to obtain an array of users.
 
         // Generate basic list view of accounts as placeholders while images load.
@@ -277,12 +282,9 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // System.out.println("* * * Orientation Changed.");
-        validNotify = false;   // Changing orientation shouldn't create a notification
+    public int getChangingConfigurations() {
+        return super.getChangingConfigurations();
     }
-
 
     // Key Lifecycle methods.
     @Override
