@@ -160,23 +160,13 @@ public class DisplayListActivity extends AppCompatActivity implements View.OnCli
 
                     source = responseBody.string();
 
-                    // System.out.println("[ START ] " + source + " [ END ] ");
-                    runOnUiThread(new Runnable() {
+                    Gson gson = new Gson();
+                    user_accounts = gson.fromJson(source, User[].class);
+
+                     runOnUiThread(new Runnable() { // Change this to only have the one funciton.
                         @Override
                         public void run() {
-                            Gson gson = new Gson();
-                            user_accounts = gson.fromJson(source, User[].class);
-                            //System.out.println("* * * runOnUiThread - Finished. ???");
-
-                            if (user_accounts == null)
-                            {
-                                System.out.println("* * * runOnUiThread Method Error - user_accounts is NULL. ???");
-                            }
-                            else
-                            {
-                                //System.out.println("* * * runOnUiThread - user_accounts is NOT NULL. ???");
-                                displayAccountRecyclerView(user_accounts);
-                            }
+                            displayAccountRecyclerView(user_accounts);
                         }
                     });
                 } catch (Exception e) {
